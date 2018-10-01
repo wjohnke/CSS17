@@ -1,0 +1,29 @@
+0001                         ********************************************
+0002                         * William Johnke
+0003                         * CS 3280 - Lab 1
+0004                         * ID: 14253530
+0005                         * February 6, 2017
+0006                         * This program will add data1 and data3 and subtract data2 
+0007                         ********************************************
+0008                         * data location starts at $B000
+0009 b000                    		ORG		$B000
+0010 b000 0a                 DATA1	FCB     	10
+0011 b001 0f                 DATA2	FCB     	15
+0012 b002 1a                 DATA3	FCB     	$1A
+0013 b003                    RESULT	RMB     	1     		reserve storage for answer
+0014                         
+0015                         * main program starts at $C000
+0016 c000                           		ORG     	$C000
+0017                         
+0018 c000 b6 b0 00           		LDAA    	DATA1   	load A with data1
+0019 c003 b0 b0 01                  		SUBA    	DATA2   	subtract data2 from A
+0020 c006 bb b0 02                  		ADDA    	DATA3   	add data3 to A
+0021 c009 b7 b0 03            		STAA    	RESULT	store A in RESULT
+0022 c00c 20 fe              DONE   	BRA     	DONE   	a little goofy, but convenient
+0023                                	 	END                    		Tells the Assembler that we’re done
+
+DATA1      b000
+DATA2      b001
+DATA3      b002
+DONE       c00c
+RESULT     b003

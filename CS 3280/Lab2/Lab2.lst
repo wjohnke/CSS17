@@ -1,0 +1,92 @@
+0001                         **************************************
+0002                         *
+0003                         * Name: William Johnke
+0004                         * ID: 14253530
+0005                         * Date: February 18, 2017
+0006                         * Lab2
+0007                         *
+0008                         * Program description:
+0009                         *
+0010                         * Pseudocode:
+0011                         * int dividend, divisor, quotient, remainder;
+0012                         * dividend=101;
+0013                         * divisor=6;
+0014                         * quotient=0;
+0015                         * 
+0016                         * if(divisor==0){
+0017                         *	quotient=0;
+0018                         *	remainder=0;
+0019                         *	return;
+0020                         * }
+0021                         * while(true){
+0022                         *	if(dividend<divisor){ 
+0023                         *		remainder=dividend;
+0024                         *		break;
+0025                         *	dividend-divisor
+0026                         *             =>dividend
+0027                         *	quotient=quotient+1;
+0028                         *	if(dividend<=1){
+0029                         *		remainder=dividend;
+0030                         *		break;
+0031                         *	}
+0032                         *}
+0033                         *
+0034                         *
+0035                         *
+0036                         **************************************
+0037                         
+0038                         * start of data section
+0039                         
+0040 b000                    	ORG $B000
+0041 b000 00                 DIVIDEND	FCB	0         The dividend
+0042 b001 19                 DIVISOR	FCB	25	The divisor.
+0043                         
+0044 b010                    	ORG $B010
+0045 b010                    QUOTIENT	RMB       1         The quotient.
+0046 b011                    REMAINDER	RMB       1         The remainder.
+0047                         * define any other variables that you might need here using RMB (not FCB or FDB)
+0048                         	
+0049                         
+0050 c000                    	ORG $C000
+0051 c000 7f b0 10           	CLR	QUOTIENT
+0052 c003 7f b0 11           	CLR	REMAINDER
+0053 c006 b6 b0 00           	LDAA	DIVIDEND
+0054 c009 f6 b0 01           	LDAB	DIVISOR
+0055                         
+0056 c00c c1 00              	CMPB	#0
+0057 c00e 27 14              	BEQ	ELSE
+0058                         	
+0059 c010 b1 b0 01           DO	CMPA	DIVISOR
+0060 c013 2d 0a              	BLT	IF
+0061                         	
+0062 c015 10                 	SBA	
+0063 c016 7c b0 10           	INC	QUOTIENT
+0064 c019 81 01              	CMPA	#1
+0065 c01b 2f 02              	BLE	IF
+0066                         
+0067 c01d 20 f1              UNTIL	BRA	DO
+0068                         
+0069 c01f b7 b0 11           IF	STAA	REMAINDER
+0070 c022 20 0a              	BRA	ENDIF
+0071                         
+0072 c024 c6 ff              ELSE	LDAB	#$FF
+0073 c026 f7 b0 11           	STAB	REMAINDER
+0074 c029 f7 b0 10           	STAB	QUOTIENT
+0075 c02c 20 00              	BRA	ENDIF
+0076                         
+0077                         
+0078 c02e 20 00              ENDIF	BRA	DONE			
+0079                         
+0080 c030 20 fe              DONE	BRA	DONE
+0081                         	END
+
+DIVIDEND   b000
+DIVISOR    b001
+DO         c010
+DONE       c030
+ELSE       c024
+ENDIF      c02e
+IF         c01f
+QUOTIENT   b010
+REMAINDER  b011
+UNTIL      c01d

@@ -1,0 +1,97 @@
+0001                         **************************************
+0002                         *
+0003                         * Name: Will Johnke
+0004                         * ID: 14253530
+0005                         * Date: 3/1/2017
+0006                         * Lab3
+0007                         *
+0008                         * Program description:
+0009                         * This program will find the greatest common
+0010                         * divisor of 2 different numbers, using Euclid's algorithm
+0011                         * Pseudocode:
+0012                         *
+0013                         *int num1=248, num2=186;
+0014                         *int gcd, remainder, oldRemainder;
+0015                         *
+0016                         *
+0017                         *
+0018                         *do{
+0019                         *     num1=>remainder;
+0020                         *     oldRemainder=remainder; //Store value of remainder before changing
+0021                         *     do{             //Find remainder of num1%num2
+0022                         *	if(remainder<num2) break;
+0023                         *	remainder-num2   
+0024                         *	=>remainder;
+0025                         *	if(remainder==0){
+0026                         *		gcd=oldRemainder;
+0027                         *		return;
+0028                         *	} 
+0029                         *     }
+0030                         *     num2=>num1
+0031                         *     remainder=>num2;
+0032                         *}     
+0033                         *	
+0034                         *
+0035                         *
+0036                         *
+0037                         **************************************
+0038                         
+0039                         * start of data section
+0040                         
+0041 b000                    	ORG $B000
+0042 b000 d3                 NUM1	FCB	211
+0043 b001 07                 NUM2	FCB	7
+0044                         
+0045 b010                    	ORG $B010
+0046 b010                    GCD	RMB	1
+0047                         
+0048                         * define any other variables that you might need here using RMB (not FCB or FDB)
+0049 b011                    REMAINDER	RMB	1
+0050 b012                    OLDREMAINDER	RMB	1
+0051 c000                    	ORG $C000
+0052                         * start of your program
+0053 c000 7f b0 10           	CLR	GCD
+0054 c003 7f b0 11           	CLR	REMAINDER
+0055                         
+0056 c006 b6 b0 00           	LDAA	NUM1
+0057 c009 f6 b0 01           	LDAB	NUM2
+0058 c00c f7 b0 12           	STAB	OLDREMAINDER
+0059                         
+0060                         WHILE1	
+0061                         
+0062                         WHILE2
+0063 c00f 11                 IF	CBA		Check if A<B, then A is the remainder, continue looping
+0064 c010 25 07              	BLO	ELSE
+0065                         
+0066 c012 10                 THEN	SBA
+0067 c013 81 00              	CMPA	#0	Catch if remainder=0, branch to appropriate section
+0068 c015 27 10              	BEQ	ENDWHL1
+0069 c017 20 f6              	BRA	WHILE1
+0070                         
+0071 c019 b7 b0 11           ELSE	STAA	REMAINDER	Handles cases where remainder still>oldremainder, loop back through,
+0072 c01c f7 b0 12           	STAB	OLDREMAINDER	swap accumulators
+0073 c01f b6 b0 12           	LDAA	OLDREMAINDER
+0074 c022 f6 b0 11           	LDAB	REMAINDER
+0075 c025 20 e8              	BRA	WHILE1
+0076                         
+0077 c027 f7 b0 10           ENDWHL1	STAB	GCD	GCD has been found
+0078 c02a 20 00              	BRA	ENDWHL2	Not really necessary, but just for code structure
+0079                         ENDWHL2
+0080                         
+0081 c02c 20 fe              DONE	BRA	DONE
+0082                         	END
+0083                         
+
+DONE       c02c
+ELSE       c019
+ENDWHL1    c027
+ENDWHL2    c02c
+GCD        b010
+IF         c00f
+NUM1       b000
+NUM2       b001
+OLDREMAINDER b012
+REMAINDER  b011
+THEN       c012
+WHILE1     c00f
+WHILE2     c00f

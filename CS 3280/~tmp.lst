@@ -1,0 +1,85 @@
+0001                         **************************************
+0002                         *
+0003                         * Name: William Johnke
+0004                         * ID: 14253530
+0005                         * Date: February 18, 2017
+0006                         * Lab2
+0007                         *
+0008                         * Program description:
+0009                         *
+0010                         * Pseudocode:
+0011                         * int dividend, divisor, quotient, remainder;
+0012                         * dividend=101;
+0013                         * divisor=6;
+0014                         * quotient=0;
+0015                         * remainder=dividend;
+0016                         * while(remainder!=1){
+0017                         *	remainder-divisor
+0018                         *             =>remainder
+  line no. 19: Unrecognized Mnemonic
+0019                         	quotient=quotient+1;
+0020                         *}
+0021                         *
+0022                         *
+0023                         *
+0024                         *
+0025                         **************************************
+0026                         
+0027                         * start of data section
+0028                         
+0029 b000                    	ORG $B000
+0030 b000 65                 DIVIDEND	FCB     101         The dividend
+0031 b001 06                 DIVISOR	FCB       6         The divisor.
+0032                         
+0033 b010                    	ORG $B010
+0034 b010                    QUOTIENT	RMB       1         The quotient.
+0035 b011                    REMAINDER	RMB       1         The remainder.
+0036                         * define any other variables that you might need here using RMB (not FCB or FDB)
+0037                         	
+0038                         
+0039 c000                    	ORG $C000
+0040                         * start of your program
+0041 c000 7f b0 10           	CLR	QUOTIENT
+0042 c003 7f b0 11           	CLR	REMAINDER
+0043                         
+0044 c006 b6 b0 00           	LDAA	DIVIDEND
+0045 c009 f6 b0 01           	LDAB	DIVISOR
+0046                         
+0047 c00c d1 00              	CMPB	$00
+  line no. 48: Symbol undefined Pass 2
+  line no. 48: Branch out of Range
+0048 c00e 27 fe              	BEQ	ELSE1
+0049                         	
+0050 c010 b1 b0 01           WHILE	CMPA	DIVISOR
+0051 c013 2e 0c              	BGT	IF
+0052                         	
+0053 c015 b0 b0 01           	SUBA	DIVISOR
+0054 c018 7c b0 10           	INC	QUOTIENT
+0055 c01b 91 01              	CMPA	$01
+0056 c01d 2f 05              	BLE	ELSE
+0057 c01f 20 ef              	BRA	WHILE			
+0058                         
+0059 c021 b7 b0 11           IF	STAA	REMAINDER
+  line no. 60: Unrecognized Mnemonic
+0060                         ELSE1	REMAINDER	$FF
+  line no. 61: Unrecognized Mnemonic
+0061                         	QUOTIENT	$FF
+0062 c024 b7 b0 11           ELSE	STAA	REMAINDER
+0063                         
+0064                         
+0065                         
+0066                         
+0067                         
+0068                         
+
+DIVIDEND   b000
+DIVISOR    b001
+ELSE       c024
+IF         c021
+QUOTIENT   b010
+REMAINDER  b011
+WHILE      c010
+
+
+DID NOT ASSEMBLE!!! 
+5 Errors encountered

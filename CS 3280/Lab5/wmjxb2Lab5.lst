@@ -1,0 +1,184 @@
+0001                         ***************************************
+0002                         *
+0003                         * Name: William Johnke
+0004                         * ID:   14253530
+0005                         * Date: 4/24/2017
+0006                         * Lab 5
+0007                         *
+0008                         * Program description:
+0009                         * This program uses a transparent subroutine with a dynamic local variable
+0010                         * to iterate through two arrays and find the greatest common divisor of each number in
+0011                         * equal positions amongst the arrays, and stores the result back in a result variable.
+0012                         *
+0013                         *
+0014                         *
+0015                         * Pseudocode of Main Program:
+0016                         *
+0017                         * WHILE(*TABLE1 != $FF){
+0018                         * 	*RESULT=CALCULATEGCD(*TABLE1, *TABLE2);
+0019                         *	TABLE1++;
+0020                         *	TABLE2++;
+0021                         *	RESULT++;
+0022                         * }
+0023                         *
+0024                         *---------------------------------------
+0025                         *
+0026                         * Pseudocode of Subroutine:
+0027                         *  
+0028                         *  CALCULATEGCD(NUM1, NUM2){
+0029                         *
+0030                         *  	DIVIDEND = NUM1;
+0031                         *  	DIVISOR = NUM2;
+0032                         *  	DO{
+0033                         *
+0034                         *       		QUOTIENT = 0;
+0035                         *       		REMAINDER = DIVIDEND;        		
+0036                         *       		WHILE (REMAINDER >= DIVISOR){           		
+0037                         *              		QUOTIENT = QUOTIENT + 1;              			
+0038                         *              		REMAINDER = REMAINDER - DIVISOR;                     
+0039                         *       		}
+0040                         *
+0041                         *       		GCD = DIVISOR;
+0042                         *       		DIVIDEND = DIVISOR;
+0043                         *       		DIVISOR = REMAINDER;
+0044                         *  	} UNTIL (REMAINDER == 0);
+0045                         *  RETURN GCD
+0046                         *	
+0047                         ***************************************
+0048                         * start of data section
+0049                         
+0050 b000                    	ORG $B000
+0051 b000 de 25 10 37 37 01  TABLE1	FCB	222,  37, 16,  55,  55,  1,   3, 22, $FF
+     03 16 ff
+0052 b009 25 de f0 05 37 0f  TABLE2	FCB	37,  222, 240,  5, 55, 15,  22,  3, $FF
+     16 03 ff
+0053                         
+0054 b020                    	ORG $B020
+0055 b020                    RESULT	RMB	8
+0056                         
+0057                         * define any other variables that you might need here using RMB (not FCB or FDB)
+0058                         * remember that your subroutine must not access any of these variables, including
+0059                         * N and PRIME
+0060                         
+0061 b028                    YREG	RMB	2	Y Register Contents (Could just use stack)
+0062                         
+0063 c000                    	ORG $C000
+0064 c000 8e 01 ff           	LDS	#$01FF		initialize stack pointer
+0065                         * start of your program
+0066                         
+0067 c003 ce b0 00           	LDX	#TABLE1
+0068 c006 18 ce b0 20        	LDY	#RESULT	Storing result table pointer on stack
+0069 c00a 18 3c              	PSHY
+0070 c00c 18 ce b0 09        	LDY	#TABLE2
+0071                         
+0072                         
+0073 c010 a6 00              WHILE	LDAA	0,X
+0074 c012 81 ff              	CMPA	#$FF
+0075 c014 27 1d              IF	BEQ	ENDIF	Check if end of table
+0076 c016 18 e6 00           THEN	LDAB	0,Y	Value to be passed to subroutine
+0077                         
+0078 c019 bd d0 00           	JSR	SUB
+0079                         
+0080 c01c 18 ff b0 28        	STY	YREG	Store Y Register contents to keep track of table2	
+0081 c020 32                 	PULA		Pull data off stack
+0082 c021 18 38              	PULY		Pull Result table address off stack
+0083 c023 18 a7 00           	STAA	0,Y
+0084 c026 08                 	INX		Increment table1 pointer
+0085 c027 18 08              	INY		Increment result table pointer
+0086 c029 18 3c              	PSHY		Put result table pointer back on stack
+0087 c02b 18 fe b0 28        	LDY	YREG
+0088 c02f 18 08              	INY		Increment table2 pointer
+0089 c031 20 dd              	BRA	WHILE
+0090 c033 18 38              ENDIF	PULY
+0091                         
+0092 c035 20 fe              DONE	BRA	DONE
+0093                         	END
+0094                         
+0095                         
+0096                         * define any other variables that you might need here using RMB (not FCB or FDB)
+0097                         * remember that your main program must not access any of these variables, including
+0098 b050                    	ORG $B050
+0099                         *LOCAL VARIABLES
+0100                         
+0101 b050                    GCD	RMB	1
+0102 b051                    QUOTIENT	RMB	1         	The quotient.
+0103 b052                    REMAINDER	RMB	1         	The remainder.
+0104 b053                    DIVIDEND	RMB	1         	The dividend
+0105 b054                    DIVISOR	RMB	1	The divisor.
+0106 b055                    XREG	RMB	2	The old x register contents
+0107                         
+0108 d000                    	ORG $D000
+0109                         * start of your subroutine 
+0110                         
+0111 d000 ff b0 55           SUB	STX	XREG	X Now has return address
+0112 d003 30                 	TSX
+0113                         
+0114 d004 34                 	DES		Open hole for return value
+0115 d005 36                 	PSHA		Pushing all registers on stack for transparency
+0116 d006 37                 	PSHB
+0117 d007 3c                 	PSHX
+0118 d008 18 3c              	PSHY
+0119 d00a 07                 	TPA
+0120 d00b 36                 	PSHA
+0121 d00c 34                 	DES		Open hole for temp variable		
+0122                         
+0123 d00d b7 b0 53           	STAA	DIVIDEND    	DIVIDEND = NUM1;
+0124 d010 f7 b0 54           	STAB	DIVISOR     	DIVISOR = NUM2;
+0125                         
+0126 d013 7f b0 51           DO   	CLR	QUOTIENT    	DO{     QUOTIENT = 0
+0127 d016 b6 b0 53           	LDAA	DIVIDEND	
+0128 d019 b7 b0 52           	STAA	REMAINDER	     REMAINDER = DIVIDEND
+0129 d01c b6 b0 52           WHILE1	LDAA	REMAINDER
+0130 d01f b1 b0 54           	CMPA	DIVISOR	     WHILE (REMAINDER >= DIVISOR) {
+0131 d022 25 0b                   	BLO	ENDWHL	  	
+0132 d024 b0 b0 54                   	SUBA	DIVISOR                     REMAINDER = REMAINDER - DIVISOR
+0133 d027 b7 b0 52           	STAA	REMAINDER
+0134 d02a 7c b0 51                   	INC	QUOTIENT      	QUOTIENT = QUOTIENT + 1	
+0135 d02d 20 ed              	BRA	WHILE1	     }
+0136                         ENDWHL
+0137 d02f b6 b0 54           	LDAA	DIVISOR	GCD = DIVISOR;   
+0138 d032 b7 b0 50           	STAA	GCD
+0139 d035 b7 b0 53           	STAA	DIVIDEND	DIVIDEND = DIVISOR; 
+0140 d038 b6 b0 52           	LDAA	REMAINDER
+0141 d03b b7 b0 54           	STAA	DIVISOR	DIVISOR = REMAINDER
+0142 d03e 7d b0 52           UNTIL	TST	REMAINDER	}   UNTIL (REMAINDER ==0)
+0143 d041 26 d0              	BNE	DO	
+0144                         
+0145                         	
+0146 d043 b6 b0 50           	LDAA	GCD	Get Variable address
+0147 d046 a7 00              	STAA	0,X
+0148 d048 6c 00              	INC	0,X	
+0149 d04a 1a ee 08           	LDY	8,X	Get return address
+0150 d04d 1a ef 07           	STY	7,X	Store into X stack pointers address 1 byte up
+0151 d050 a6 00              	LDAA	0,X	Storing gcd address	
+0152 d052 a7 09              	STAA	9,X	Storing in bottom of stack
+0153 d054 31                 	INS		Destroy local variables
+0154                         
+0155 d055 32                 	PULA		Restore all registers
+0156 d056 06                 	TAP
+0157 d057 32                 	PULA
+0158 d058 18 38              	PULY
+0159 d05a 38                 	PULX
+0160                         
+0161 d05b 39                 	RTS
+
+DIVIDEND   b053
+DIVISOR    b054
+DO         d013
+DONE       c035
+ENDIF      c033
+ENDWHL     d02f
+GCD        b050
+IF         c014
+QUOTIENT   b051
+REMAINDER  b052
+RESULT     b020
+SUB        d000
+TABLE1     b000
+TABLE2     b009
+THEN       c016
+UNTIL      d03e
+WHILE      c010
+WHILE1     d01c
+XREG       b055
+YREG       b028
